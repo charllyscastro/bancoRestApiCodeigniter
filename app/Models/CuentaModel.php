@@ -4,20 +4,19 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ClienteModel extends Model
+class CuentaModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'cliente';
+    protected $table            = 'cuenta';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'nombre',
-        'apellido',
-        'telefono',
-        'correo'
+        'moneda',
+        'fondo',
+        'cliente_id'
     ];
 
     // Dates
@@ -29,17 +28,12 @@ class ClienteModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'nombre'   => 'required|alpha_space|min_length[3]|max_length[75]',
-        'apellido' => 'required|alpha_space|min_length[3]|max_length[75]',
-        'telefono' => 'required|exact_length[13]',
-        'correo'   => 'permit_empty|valid_email|max_length[85]',
+        'moneda'     => 'required|alpha_space|min_length[3]|max_length[3]',
+        'fondo'      => 'required|numeric',
+        'cliente_id' => 'required|integer|is_valid_cliente'
     ];
-    protected $validationMessages   = [
-        'correo'    => [
-            'valid_email' => 'E-mail não é válido'
-        ]
-    ];
-    protected $skipValidation       = false; // Não pode escapar nenhuma validação, tem que seguir a regra
+    protected $validationMessages   = [];
+    protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
     // Callbacks

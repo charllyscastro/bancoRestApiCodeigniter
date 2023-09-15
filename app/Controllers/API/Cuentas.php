@@ -2,37 +2,36 @@
 
 namespace App\Controllers\API;
 
-use App\Models\ClienteModel;
+use App\Models\CuentaModel;
 use CodeIgniter\RESTful\ResourceController;
 
-class Clientes extends ResourceController
+class Cuentas extends ResourceController
 {
 
     public function __construct()
     {
-        // Na classe ResourceController podemos instanciar os models que queremos trabalhar
-        $this->model = $this->setModel(new ClienteModel());
+        $this->model = $this->setModel(new CuentaModel());
     }
 
     public function index()
     {
-        $clientes = $this->model->findAll();
-        return $this->respond($clientes);
+        $cuentas = $this->model->findAll();
+
+        return $this->respond($cuentas);
     }
 
     public function create()
     {
         try {
+            $cuenta = $this->request->getJSON();
 
-            $cliente = $this->request->getJSON();
-
-            if ($this->model->insert($cliente)) {
-                $cliente->id = $this->model->insertID();
-                return $this->respondCreated($cliente);
+            if ($this->model->insert($cuenta)) {
+                $cuenta->id = $this->model->insertID();
+                return $this->respondCreated($cuenta);
             } else {
                 return $this->failValidationErrors($this->model->validation->listErrors());
             }
-        } catch (\Exception $e) {
+        } catch (\Exception $th) {
             return $this->failServerError('Ocorreu um erro no servidor');
         }
     }
@@ -45,13 +44,13 @@ class Clientes extends ResourceController
                 return $this->failValidationErrors("Não foi passado um ID válido");
             }
 
-            $cliente = $this->model->find($id);
+            $cuenta = $this->model->find($id);
 
-            if ($cliente == null) {
-                return $this->failNotFound("Não foi encontrado nenhum cliente com o ID: $id");
+            if ($cuenta == null) {
+                return $this->failNotFound("Não encontramos a cuenta com o ID: $id");
             }
 
-            return $this->respond($cliente);
+            return $this->respond($cuenta);
         } catch (\Exception $e) {
             return $this->failServerError('Ocorreu um erro no servidor');
         }
@@ -61,25 +60,26 @@ class Clientes extends ResourceController
     {
         try {
 
+
             if ($id == null) {
                 return $this->failValidationErrors("Não foi passado um ID válido");
             }
 
-            $clienteVerificado = $this->model->find($id);
+            $cuentaVerificado = $this->model->find($id);
 
-            if ($clienteVerificado == null) {
+            if ($cuentaVerificado == null) {
                 return $this->failNotFound("Não foi encontrado nenhum cliente com o ID: $id");
             }
 
-            $cliente = $this->request->getJSON();
+            $cuenta = $this->request->getJSON();
 
-            if ($this->model->update($id, $cliente)) {
-                $cliente->id = $id;
-                return $this->respondUpdated($cliente);
+            if ($this->model->update($id, $cuenta)) {
+                $cuenta->id = $id;
+                return $this->respondUpdated($cuenta);
             } else {
                 return $this->failValidationErrors($this->model->validation->listErrors());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->failServerError('Ocorreu um erro no servidor');
         }
     }
@@ -87,22 +87,19 @@ class Clientes extends ResourceController
     public function delete($id = null)
     {
         try {
-
             if ($id == null) {
-                return $this->failValidationErrors("Não foi passado um ID válido");
+                return $this->failValidationErrors('Não foi passado um ID válido');
             }
 
-            $clienteVerificado = $this->model->find($id);
+            $cuentaVerificado = $this->model->find($id);
 
-            if ($clienteVerificado == null) {
-                return $this->failNotFound("Não foi encontrado nenhum cliente com o ID: $id");
+            if ($cuentaVerificado == null) {
+                return $this->failNotFound("Não foi encontrado nenhuma cuenta com o ID: $id");
             }
-
             if ($this->model->delete($id)) {
-
-                return $this->respondDeleted($clienteVerificado);
+                return $this->respond($cuentaVerificado);
             } else {
-                return $this->failServerError('Não foi possivel deletar o registro');
+                return $this->failServerError('Não foi possivel excluir a cuenta');
             }
         } catch (\Exception $e) {
             return $this->failServerError('Ocorreu um erro no servidor');
